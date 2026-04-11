@@ -21,6 +21,9 @@ htmlcov/
 **/*-workspace/
 *.skill
 
+# Local Copilot conversation summaries
+.copilot-history/
+
 # Local logs and temporary files
 *.log
 *.tmp
