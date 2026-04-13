@@ -49,6 +49,7 @@ copilot-context-bundle/
 ## 目前已建立的 shared / profile 骨架
 
 - `shared/.github/copilot-instructions.md`
+- `shared/.github/instructions/copilot-context-bundle-operations.instructions.md`
 - `shared/.github/skills/git/conventional-commits/`
 - `shared/.github/skills/workflow/save-conversation-history/`
 - `shared/.vscode/mcp.json`
