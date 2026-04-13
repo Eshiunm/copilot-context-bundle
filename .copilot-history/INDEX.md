@@ -13,3 +13,5 @@
 	- 記錄今天對 workspace 定位與本地摘要機制的定案內容。
 - `2026-04-13-bundle-sync-model` -> `sessions/2026-04-13-bundle-sync-model.md`
 	- 記錄每個 workspace 單一專案、profile 安裝模型與 manifest/雙向同步的討論結果。
+- `2026-04-13-instructions-layering-choice` -> `sessions/2026-04-13-instructions-layering-choice.md`
+	- 記錄使用者選擇以 shared 基底搭配 profile `.instructions.md` 作為專案客製化方式。

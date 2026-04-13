@@ -19,6 +19,8 @@
 - QNAP 專案的開發模型偏向「每個 workspace 只開一個專案 repo」，不以父資料夾共享同一組專案客製化作為正式架構。
 - `copilot-instructions.md` 應維持為共用基底規則，不作為依專案動態分流或 include 其他客製化檔案的主要機制。
 - bundle 套用方向改為 `shared + project profile + repo local overrides` 三層模型，依安裝的 profile 決定各專案拿到哪些 Copilot 客製化內容。
+- 針對專案客製化 instructions，優先採「shared 的 `copilot-instructions.md` + profile 提供 `.github/instructions/*.instructions.md`」的做法；不把 `copilot-instructions.md` 當成讀取其他 instruction 檔的主要路由器。
+- 使用者目前偏好採用「用 `.instructions.md`，但必要時讓它很容易被套用」的方案，作為 profile 層專案客製化的主要方向。
 - 若要保留從專案回流到 bundle 的能力，應以 manifest 記錄來源與 managed items，並透過 `install / status / update / promote` 類型的流程處理，而不是依賴手動複製。
 
 ## 待確認
@@ -28,11 +30,13 @@
 - manifest 的欄位與 schema 要如何設計，才能記錄 bundle 來源、profile、managed items 與內容指紋。
 - `install / status / update / promote` 的 CLI 行為定義要做到什麼程度，第一版是否只做半自動決策。
 - 哪些 skills、prompts、instructions、hooks、MCP 設定適合放在 `shared`、`profile`、`local`，尤其 hooks 與 MCP 可能更偏向 profile 層。
+- profile 層的 `.instructions.md` 要如何命名、寫 `description`，以及是否需要少量 `applyTo` 規則來提高命中率。
 
 ## 下一步
 - 持續把高價值的工作流程整理成 skills 與 instructions。
 - 先把 manifest 欄位與同步規則講清楚，再決定 CLI、腳本或更清楚的導入說明。
 - 釐清 `shared / profile / local` 三層邊界，避免 bundle 被單一專案語境污染。
+- 依本次選擇，進一步定義 `copilot-instructions.md` 與 profile `.instructions.md` 的責任分界與命名方式。
 - 後續若出現新的長期方向變更，優先更新這份 topic 摘要，而不是重複新增類似檔案。
 
 ## 參考
