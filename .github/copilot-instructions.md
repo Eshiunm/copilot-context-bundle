@@ -11,8 +11,11 @@
   - 在 README.md 記錄安裝、執行、測試方式。
 
 ## Architecture
-- 目前尚未建立固定架構與元件邊界。
-- 實作前先提出簡潔的目錄結構，再只實作任務必要範圍。
+- 這個 repo 已採用 bundle source 結構：`shared/` 放所有 target repo 共用的資產，`profiles/` 放專案或專案家族的客製化資產。
+- 根目錄 `.github/` 與 `.vscode/` 是維護這個 bundle repo 本身的工作區設定；可注入其他 repo 的正式來源是 `shared/` 與 `profiles/`。
+- 為了維持這個 bundle repo 自身的 Copilot 體驗，部分 shared 類型 customizations 目前會在根目錄保留作者側副本；注入其他 repo 時仍以 `shared/` 為準。
+- `shared/.github/copilot-instructions.md` 應維持為共用基底規則；專案特化規則優先放在 `profiles/*/.github/instructions/*.instructions.md`。
+- 實作 bundle 安裝流程時，優先維持結構清楚、責任單純，避免把 profile-specific 規則塞進 shared。
 
 ## Conventions
 - 變更需保持聚焦、可分步審查，便於早期歷史追蹤。
