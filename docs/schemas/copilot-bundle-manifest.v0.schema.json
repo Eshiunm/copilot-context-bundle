@@ -1,0 +1,274 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:copilot-context-bundle:manifest:v0",
+  "title": "Copilot Bundle Manifest v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "bundle",
+    "installer",
+    "installedAt",
+    "profile",
+    "targets",
+    "checksumAlgorithm",
+    "managedItems",
+    "localOverrides"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "0.1.0"
+    },
+    "bundle": {
+      "$ref": "#/$defs/bundle"
+    },
+    "installer": {
+      "$ref": "#/$defs/installer"
+    },
+    "installedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "profile": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/installTarget"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "checksumAlgorithm": {
+      "type": "string",
+      "const": "sha256"
+    },
+    "managedItems": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/managedItem"
+      },
+      "minItems": 1
+    },
+    "localOverrides": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/localOverride"
+      }
+    }
+  },
+  "$defs": {
+    "installTarget": {
+      "type": "string",
+      "enum": [
+        "github",
+        "vscode",
+        "claude"
+      ]
+    },
+    "bundleSourceType": {
+      "type": "string",
+      "enum": [
+        "local-workspace",
+        "npm-package"
+      ]
+    },
+    "layer": {
+      "type": "string",
+      "enum": [
+        "shared",
+        "profile"
+      ]
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?![A-Za-z]:)(?!/)(?!\\\\)(?!\\.\\.(?:/|\\\\|$)).+"
+    },
+    "bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "sourceType",
+        "packageName",
+        "packageVersion",
+        "repository",
+        "commit"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceType": {
+          "$ref": "#/$defs/bundleSourceType"
+        },
+        "packageName": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "packageVersion": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "repository": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "commit": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{7,40}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "installer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "managedItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "layer",
+        "target",
+        "sourcePath",
+        "targetPath",
+        "checksum"
+      ],
+      "properties": {
+        "layer": {
+          "$ref": "#/$defs/layer"
+        },
+        "target": {
+          "$ref": "#/$defs/installTarget"
+        },
+        "sourcePath": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "targetPath": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "checksum": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "layer": {
+                "const": "shared"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "sourcePath": {
+                "pattern": "^shared/"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "layer": {
+                "const": "profile"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "sourcePath": {
+                "pattern": "^profiles/[^/]+/"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "localOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "targetPath",
+        "reason",
+        "recordedAt"
+      ],
+      "properties": {
+        "targetPath": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "reason": {
+          "type": "string",
+          "enum": [
+            "keep-local",
+            "user-owned",
+            "promoted"
+          ]
+        },
+        "recordedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}
