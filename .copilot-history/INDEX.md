@@ -6,6 +6,8 @@
 
 - `workspace-positioning` -> `topics/workspace-positioning.md`
 	- 定義這個 repo 的長期定位，以及 bundle 的套用與同步方向。
+- `bundle-cli-and-manifest` -> `topics/bundle-cli-and-manifest.md`
+	- 記錄 manifest v0、CLI v0、npm package skeleton 與 promote 回流測試方向。
 
 ## Session Snapshots
 
@@ -15,3 +17,5 @@
 	- 記錄每個 workspace 單一專案、profile 安裝模型與 manifest/雙向同步的討論結果。
 - `2026-04-13-instructions-layering-choice` -> `sessions/2026-04-13-instructions-layering-choice.md`
 	- 記錄使用者選擇以 shared 基底搭配 profile `.instructions.md` 作為專案客製化方式。
+- `2026-04-13-manifest-cli-v0-and-promote-plan` -> `sessions/2026-04-13-manifest-cli-v0-and-promote-plan.md`
+	- 記錄 manifest v0、CLI package v0、npm CLI skeleton 與 promote 測試前的整理結果。
