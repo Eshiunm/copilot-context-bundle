@@ -17,6 +17,7 @@
     "README.md"
   ],
   "scripts": {
+    "test": "node --test",
     "cli": "node ./bin/copilot-bundle.js",
     "cli:help": "node ./bin/copilot-bundle.js --help",
     "cli:version": "node ./bin/copilot-bundle.js --version"

@@ -69,6 +69,7 @@ copilot-context-bundle/
 ### 本機執行
 
 ```text
+npm test
 npm run cli -- --help
 npm run cli -- install ..\bundle-sandbox --profile storage-manager-fe --dry-run
 npm run cli -- status ..\bundle-sandbox
@@ -76,18 +77,31 @@ npm run cli -- update ..\bundle-sandbox --bundle-source . --dry-run
 npm run cli -- promote ..\bundle-sandbox --file .github\instructions\storage-manager-fe.instructions.md --bundle-source .
 ```
 
+### 自動化測試
+
+```text
+npm test
+```
+
+目前自動化測試已覆蓋：
+
+- `help` / `version` 基本 CLI 輸出
+- `install` 與 `status` 基本安裝狀態
+- `update` 的 refresh / add / restore / drift / `--force` / `--prune` / relocation
+- `promote` 的 baseline reset 與 managed file relocate
+
 ### 指令、參數、完成度、測試狀態對照表
 
 | 指令 | 主要參數 | 功能摘要 | 完成度 | 是否測過 |
 |---|---|---|---|---|
-| `install` | `<targetPath>`、`--profile`、`--target`、`--force`、`--dry-run`、`--bundle-source` | 安裝 `shared/` 與指定 `profile`，並寫出 `.copilot-bundle/manifest.json` | 已完成 | 是（smoke test） |
-| `status` | `<targetPath>`、`--json`、`--fail-on-drift` | 根據 manifest 檢查 managed items 的 `ok / modified / missing` 狀態 | 已完成 | 是（smoke test） |
-| `update` | `<targetPath>`、`--bundle-source`、`--dry-run`、`--force`、`--prune`、`--json` | 依目前 bundle source 更新同一組 managed items，支援 refresh / add / restore / prune / relocation | 已完成（v0 第一版） | 是（smoke test + refresh / add / restore / drift / prune / relocation） |
-| `promote` | `<targetPath>`、`--file`、`--to`、`--bundle-source`、`--dry-run`、`--force` | 將 target repo 檔案回填到 bundle source repo，並更新 target baseline 與來源對位 | 已完成 | 是（happy path + edge cases） |
-| `help` | `help [command]`、`<command> --help` | 顯示整體或單一命令的使用說明 | 已完成 | 是（基本輸出已驗證） |
-| `version` | `version`、`--version` | 顯示 CLI 版本 | 已完成 | 否（尚未獨立測試） |
+| `install` | `<targetPath>`、`--profile`、`--target`、`--force`、`--dry-run`、`--bundle-source` | 安裝 `shared/` 與指定 `profile`，並寫出 `.copilot-bundle/manifest.json` | 已完成 | 是（自動化測試 + smoke test） |
+| `status` | `<targetPath>`、`--json`、`--fail-on-drift` | 根據 manifest 檢查 managed items 的 `ok / modified / missing` 狀態 | 已完成 | 是（自動化測試 + smoke test） |
+| `update` | `<targetPath>`、`--bundle-source`、`--dry-run`、`--force`、`--prune`、`--json` | 依目前 bundle source 更新同一組 managed items，支援 refresh / add / restore / prune / relocation | 已完成（v0 第一版） | 是（自動化測試 + smoke test） |
+| `promote` | `<targetPath>`、`--file`、`--to`、`--bundle-source`、`--dry-run`、`--force` | 將 target repo 檔案回填到 bundle source repo，並更新 target baseline 與來源對位 | 已完成 | 是（自動化測試 + happy path / edge cases） |
+| `help` | `help [command]`、`<command> --help` | 顯示整體或單一命令的使用說明 | 已完成 | 是（自動化測試） |
+| `version` | `version`、`--version` | 顯示 CLI 版本 | 已完成 | 是（自動化測試） |
 
-註：上表的「是否測過」以目前這個 repo 在本地開發流程中的實測結果為準，代表 smoke / 邊界驗證狀態，不等同完整自動化測試覆蓋。
+註：上表的「是否測過」代表目前已具備本地自動化驗證與手動 smoke / 邊界驗證；但仍不等同完整 CI 級別覆蓋。
 
 ### 目前已完成的命令生命週期
 
@@ -102,4 +116,4 @@ npm run cli -- promote ..\bundle-sandbox --file .github\instructions\storage-man
 
 - v0 先以本機 workspace 執行與本機測試為主，尚未接 private npm registry 發佈流程。
 - `uninstall`、`doctor`、`publish`、`init` 等命令尚未實作。
-- `update` 目前為 v0 第一版，已支援核心同步路徑，但尚未加入更細的自動化測試與進一步的高階 rename 推斷。
+- `update` 目前為 v0 第一版，已支援核心同步路徑與自動化測試，但尚未加入更高階的 rename 推斷與更完整的長期回歸測試矩陣。
