@@ -240,6 +240,7 @@ copilot-bundle promote <targetPath> --file <repoRelativePath> [options]
    - 若使用者提供 `--to`，則以 `--to` 覆蓋預設目的地
 4. 若不是 `--dry-run`：
    - 複製 target repo 的檔案到 bundle source repo 對應位置
+   - 若 managed item 的 promote 目的地與原 `sourcePath` 不同，移除舊的 bundle source 檔案，避免未來 install 出現 duplicate target mapping
    - 若目標檔原本已是 managed item，更新 target repo manifest 中該 item 的 `sourcePath` / `layer`（如有變更）與 `checksum`，將 promote 後內容視為新的 target baseline
    - 更新 target repo manifest 的 `localOverrides`
 5. 提示使用者下一步：
