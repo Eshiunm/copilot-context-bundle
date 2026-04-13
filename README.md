@@ -58,9 +58,9 @@ copilot-context-bundle/
 
 後續如果要把注入流程正式工具化，會以 `install / status / update / promote` 為主要方向。
 
-## npm CLI package skeleton v0
+## npm CLI package v0 現況
 
-這個 repo 現在已包含 `copilot-bundle` 的最小 npm CLI package 骨架，供本機開發與本機驗證使用。
+這個 repo 現在已包含 `copilot-bundle` 的 v0 CLI 實作，可供本機開發、本機驗證與 bundle round-trip 測試使用。
 
 ### 前置條件
 
@@ -72,15 +72,34 @@ copilot-context-bundle/
 npm run cli -- --help
 npm run cli -- install ..\bundle-sandbox --profile storage-manager-fe --dry-run
 npm run cli -- status ..\bundle-sandbox
+npm run cli -- update ..\bundle-sandbox --bundle-source . --dry-run
+npm run cli -- promote ..\bundle-sandbox --file .github\instructions\storage-manager-fe.instructions.md --bundle-source .
 ```
 
-### 目前命令範圍
+### 指令、參數、完成度、測試狀態對照表
 
-- `install`：安裝 `shared/` 與指定 `profile`，並寫出 `.copilot-bundle/manifest.json`
-- `status`：根據 manifest 檢查 managed items 是否 drift
-- `promote`：將 target repo 檔案回填到 bundle source repo
+| 指令 | 主要參數 | 功能摘要 | 完成度 | 是否測過 |
+|---|---|---|---|---|
+| `install` | `<targetPath>`、`--profile`、`--target`、`--force`、`--dry-run`、`--bundle-source` | 安裝 `shared/` 與指定 `profile`，並寫出 `.copilot-bundle/manifest.json` | 已完成 | 是（smoke test） |
+| `status` | `<targetPath>`、`--json`、`--fail-on-drift` | 根據 manifest 檢查 managed items 的 `ok / modified / missing` 狀態 | 已完成 | 是（smoke test） |
+| `update` | `<targetPath>`、`--bundle-source`、`--dry-run`、`--force`、`--prune`、`--json` | 依目前 bundle source 更新同一組 managed items，支援 refresh / add / restore / prune / relocation | 已完成（v0 第一版） | 是（smoke test + refresh / add / restore / drift / prune / relocation） |
+| `promote` | `<targetPath>`、`--file`、`--to`、`--bundle-source`、`--dry-run`、`--force` | 將 target repo 檔案回填到 bundle source repo，並更新 target baseline 與來源對位 | 已完成 | 是（happy path + edge cases） |
+| `help` | `help [command]`、`<command> --help` | 顯示整體或單一命令的使用說明 | 已完成 | 是（基本輸出已驗證） |
+| `version` | `version`、`--version` | 顯示 CLI 版本 | 已完成 | 否（尚未獨立測試） |
+
+註：上表的「是否測過」以目前這個 repo 在本地開發流程中的實測結果為準，代表 smoke / 邊界驗證狀態，不等同完整自動化測試覆蓋。
+
+### 目前已完成的命令生命週期
+
+- `install`：把資產裝進 target repo，並寫 manifest
+- `status`：檢查 target repo 是否偏離 manifest
+- `update`：沿用既有 manifest 身分同步最新 bundle source
+- `promote`：把 target repo 的修改回填到 bundle source repo
+
+這四個命令已形成目前 v0 的最小可管理生命週期。
 
 ### 目前限制
 
 - v0 先以本機 workspace 執行與本機測試為主，尚未接 private npm registry 發佈流程。
-- `update`、`uninstall`、`doctor` 等命令暫未實作。
+- `uninstall`、`doctor`、`publish`、`init` 等命令尚未實作。
+- `update` 目前為 v0 第一版，已支援核心同步路徑，但尚未加入更細的自動化測試與進一步的高階 rename 推斷。
