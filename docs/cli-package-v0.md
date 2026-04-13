@@ -240,7 +240,8 @@ copilot-bundle promote <targetPath> --file <repoRelativePath> [options]
    - 若使用者提供 `--to`，則以 `--to` 覆蓋預設目的地
 4. 若不是 `--dry-run`：
    - 複製 target repo 的檔案到 bundle source repo 對應位置
-   - 視需要更新 target repo manifest 的 `localOverrides`
+   - 若目標檔原本已是 managed item，更新 target repo manifest 中該 item 的 `sourcePath` / `layer`（如有變更）與 `checksum`，將 promote 後內容視為新的 target baseline
+   - 更新 target repo manifest 的 `localOverrides`
 5. 提示使用者下一步：
    - 回到 bundle source repo review diff
    - commit
@@ -251,6 +252,7 @@ copilot-bundle promote <targetPath> --file <repoRelativePath> [options]
 - promote 不直接 commit bundle source repo
 - promote 不直接 publish npm package
 - promote 不自動修改 target repo 中其他 managed items
+- promote 若處理的是原本不在 manifest 內的 local 檔案，v0 不會自動把它新增成新的 managed item；此情況只回填 bundle source 並留下 promote 紀錄
 
 ## `help`
 
