@@ -25,3 +25,8 @@ htmlcov/
 *.log
 *.tmp
 *.temp
+
+# Node.js packages and artifacts
+node_modules/
+.npm/
+*.tgz

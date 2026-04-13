@@ -1,0 +1,27 @@
+{
+  "name": "copilot-context-bundle",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CLI and source assets for installing Copilot context bundles into target repositories.",
+  "type": "commonjs",
+  "bin": {
+    "copilot-bundle": "./bin/copilot-bundle.js"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "shared/",
+    "profiles/",
+    "docs/manifest-v0.md",
+    "docs/schemas/copilot-bundle-manifest.v0.schema.json",
+    "README.md"
+  ],
+  "scripts": {
+    "cli": "node ./bin/copilot-bundle.js",
+    "cli:help": "node ./bin/copilot-bundle.js --help",
+    "cli:version": "node ./bin/copilot-bundle.js --version"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

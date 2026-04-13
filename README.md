@@ -57,3 +57,30 @@ copilot-context-bundle/
 - `profiles/core/.github/instructions/`
 
 後續如果要把注入流程正式工具化，會以 `install / status / update / promote` 為主要方向。
+
+## npm CLI package skeleton v0
+
+這個 repo 現在已包含 `copilot-bundle` 的最小 npm CLI package 骨架，供本機開發與本機驗證使用。
+
+### 前置條件
+
+- Node.js 18 以上
+
+### 本機執行
+
+```text
+npm run cli -- --help
+npm run cli -- install ..\bundle-sandbox --profile storage-manager-fe --dry-run
+npm run cli -- status ..\bundle-sandbox
+```
+
+### 目前命令範圍
+
+- `install`：安裝 `shared/` 與指定 `profile`，並寫出 `.copilot-bundle/manifest.json`
+- `status`：根據 manifest 檢查 managed items 是否 drift
+- `promote`：將 target repo 檔案回填到 bundle source repo
+
+### 目前限制
+
+- v0 先以本機 workspace 執行與本機測試為主，尚未接 private npm registry 發佈流程。
+- `update`、`uninstall`、`doctor` 等命令暫未實作。
