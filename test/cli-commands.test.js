@@ -117,7 +117,52 @@ test('install creates managed files and status reports a clean manifest', async 
 
   const statusResult = runCli(['status', sandbox.targetRoot]);
   assertExitCode(statusResult, 0, 'status after install');
+  assert.equal(statusResult.stdout.includes('Manifest:'), false);
   assert.match(statusResult.stdout, new RegExp(`Managed items: ${manifest.managedItems.length}`));
+  assert.match(statusResult.stdout, /Modified: 0/);
+  assert.match(statusResult.stdout, /Missing: 0/);
+
+  const jsonStatusResult = runCli(['status', sandbox.targetRoot, '--json']);
+  assertExitCode(jsonStatusResult, 0, 'status json after install');
+  const jsonStatus = JSON.parse(jsonStatusResult.stdout);
+  assert.match(jsonStatus.manifestPath.replace(/\\/g, '/'), /\/\.copilot-bundle\/manifest\.json$/);
+});
+
+test('install with force can switch profile and prune stale managed files', async (t) => {
+  const sandbox = await createSandbox();
+  t.after(() => cleanupSandbox(sandbox.tempRoot));
+
+  await installProfile(sandbox.targetRoot, sandbox.bundleRoot);
+
+  const forceInstallResult = runCli([
+    'install',
+    sandbox.targetRoot,
+    '--profile',
+    'nasx86',
+    '--bundle-source',
+    sandbox.bundleRoot,
+    '--force'
+  ]);
+  assertExitCode(forceInstallResult, 0, 'force install with profile switch');
+
+  const manifest = await readManifest(sandbox.targetRoot);
+  assert.equal(manifest.profile, 'nasx86');
+  assert.ok(
+    manifest.managedItems.every((item) => !item.targetPath.includes('/storage-manager-fe/')),
+    `manifest still references storage-manager-fe items: ${JSON.stringify(manifest.managedItems, null, 2)}`
+  );
+
+  await fs.access(path.join(sandbox.targetRoot, '.github', 'instructions', 'nasx86', 'nasx86.instructions.md'));
+  await assert.rejects(
+    fs.access(path.join(sandbox.targetRoot, '.github', 'instructions', 'storage-manager-fe', 'storage-manager-fe.instructions.md'))
+  );
+  await assert.rejects(
+    fs.access(path.join(sandbox.targetRoot, '.github', 'instructions', 'storage-manager-fe', 'frontend-ui.instructions.md'))
+  );
+
+  const statusResult = runCli(['status', sandbox.targetRoot]);
+  assertExitCode(statusResult, 0, 'status after profile switch');
+  assert.match(statusResult.stdout, /Profile: nasx86/);
   assert.match(statusResult.stdout, /Modified: 0/);
   assert.match(statusResult.stdout, /Missing: 0/);
 });
