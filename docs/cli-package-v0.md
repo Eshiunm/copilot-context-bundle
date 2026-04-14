@@ -189,7 +189,11 @@ copilot-bundle status <targetPath> [options]
    - `ok`
    - `modified`
    - `missing`
-5. 顯示 `localOverrides` 摘要
+5. 文字輸出會額外列出相對 `targetPath`：
+   - 全部 `managed items`
+   - `modified` items
+   - `missing` items
+6. 顯示 `localOverrides` 摘要
 
 ### `status` 的判定語意
 
@@ -202,12 +206,17 @@ copilot-bundle status <targetPath> [options]
 ### 輸出示例
 
 ```text
-Bundle: copilot-context-bundle
 Profile: storage-manager-fe
 Managed items: 6
+   - .github/copilot-instructions.md
+   - .github/instructions/common/copilot-context-bundle-operations.instructions.md
+   - .github/instructions/storage-manager-fe/storage-manager-fe.instructions.md
+   - ...
 OK: 4
 Modified: 1
+   - .github/instructions/storage-manager-fe/storage-manager-fe.instructions.md
 Missing: 1
+   - .vscode/mcp.json
 ```
 
 ## `update`
