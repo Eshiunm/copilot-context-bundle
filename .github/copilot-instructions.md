@@ -24,6 +24,18 @@
 - 使用者要求撰寫 git commit 訊息或執行 git commit 時，預設採用 Conventional Commits，格式優先使用 `type(scope): summary`，並根據實際變更判斷最準確的 type 與 scope。
 - 與使用者互動時，一律使用繁體中文回覆。
 
+## Git Remotes and Sync
+- 這個 repo 預設同時維護兩個 remote：`github`（個人 GitHub repo）與 `gitlab`（公司 GitLab repo）。
+- 使用者要求「推送至遠端」時，若未特別指定 remote，先檢查目前 branch、工作樹與 upstream 狀態，再依需要推送到 `github` 與 `gitlab`。
+- 若 `gitlab` push 因非公司網路環境、VPN / SSH / 權限限制而失敗，這在家用電腦或非公司網路下屬於可預期情況；若 `github` 已成功推送，可將 `gitlab` 失敗視為非致命並在回報中清楚說明，不必將此情況判定為異常。
+- 除非使用者明確要求排查 `gitlab` 連線問題，否則遇到上述情境時不需為了 `gitlab` 失敗而回滾已成功的 `github` push。
+- 當使用者提到「請同步專案版本」時，預設解讀為同步本地 branch 與遠端 `github` / `gitlab` 的對應 branch；建議流程是：
+  1. 先確認工作樹乾淨；若有未提交變更，先提醒使用者提交、stash 或明確決定如何處理。
+  2. 執行 fetch，確認本地、`github/<branch>`、`gitlab/<branch>` 的 commit 差異。
+  3. 若差異可用 fast-forward 安全同步，先更新本地 branch，再將同一份 commit 推送到另一個 remote，讓本地與兩端遠端對齊。
+  4. 若出現分叉、需要 merge / rebase、或遠端彼此不一致，先整理差異並回報，不要未經使用者確認就 force push 或改寫歷史。
+  5. 若同步到 `gitlab` 時因非公司網路環境失敗，回報 `github` 與本地已同步成功，並註明 `gitlab` 可待回到公司網路後再補推。
+
 ## Local Copilot History
 - 本地對話摘要一律放在 `.copilot-history/`。
 - `.copilot-history/` 只保存精簡摘要，不保存逐字對話紀錄。
