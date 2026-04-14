@@ -1,6 +1,6 @@
 {
   "name": "copilot-context-bundle",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "private": true,
   "description": "CLI and source assets for installing Copilot context bundles into target repositories.",
   "type": "commonjs",

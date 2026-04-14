@@ -191,10 +191,9 @@ copilot-bundle status <targetPath> [options]
    - `modified`
    - `missing`
 5. 預設文字輸出只顯示摘要：
-   - `bundle`
    - `profile`
    - `managed items`
-   - `ok / modified / missing`
+   - `modified / missing`
 6. 若指定 `--detail`，文字輸出會額外列出相對 `targetPath`：
    - 全部 `managed items`
    - `modified` items
@@ -213,10 +212,8 @@ copilot-bundle status <targetPath> [options]
 ### 預設輸出示例
 
 ```text
-Bundle: copilot-context-bundle
 Profile: storage-manager-fe
 Managed items: 6
-OK: 4
 Modified: 1
 Missing: 1
 ```
@@ -230,7 +227,6 @@ Managed items: 6
    - .github/instructions/common/copilot-context-bundle-operations.instructions.md
    - .github/instructions/storage-manager-fe/storage-manager-fe.instructions.md
    - ...
-OK: 4
 Modified: 1
    - .github/instructions/storage-manager-fe/storage-manager-fe.instructions.md
 Missing: 1

@@ -121,7 +121,8 @@ test('install creates managed files and status reports a clean manifest', async 
 
   const statusResult = runCli(['status', sandbox.targetRoot]);
   assertExitCode(statusResult, 0, 'status after install');
-  assert.match(statusResult.stdout, /Bundle: copilot-context-bundle/);
+  assert.equal(statusResult.stdout.includes('Bundle:'), false);
+  assert.equal(statusResult.stdout.includes('OK:'), false);
   assert.equal(statusResult.stdout.includes('Manifest:'), false);
   assert.equal(statusResult.stdout.includes(sandbox.targetRoot), false);
   assert.match(statusResult.stdout, new RegExp(`Managed items: ${manifest.managedItems.length}`));
@@ -132,6 +133,7 @@ test('install creates managed files and status reports a clean manifest', async 
   const detailStatusResult = runCli(['status', sandbox.targetRoot, '--detail']);
   assertExitCode(detailStatusResult, 0, 'status detail after install');
   assert.equal(detailStatusResult.stdout.includes('Bundle:'), false);
+  assert.equal(detailStatusResult.stdout.includes('OK:'), false);
   assert.equal(detailStatusResult.stdout.includes('Manifest:'), false);
   assert.equal(detailStatusResult.stdout.includes(sandbox.targetRoot), false);
   assert.match(detailStatusResult.stdout, new RegExp(`Managed items: ${manifest.managedItems.length}`));
@@ -160,10 +162,10 @@ test('status detail lists modified and missing managed paths with relative targe
 
   const summaryStatusResult = runCli(['status', sandbox.targetRoot]);
   assertExitCode(summaryStatusResult, 0, 'status summary with modified and missing items');
-  assert.match(summaryStatusResult.stdout, /Bundle: copilot-context-bundle/);
+  assert.equal(summaryStatusResult.stdout.includes('Bundle:'), false);
+  assert.equal(summaryStatusResult.stdout.includes('OK:'), false);
   assert.equal(summaryStatusResult.stdout.includes(sandbox.targetRoot), false);
   assert.match(summaryStatusResult.stdout, new RegExp(`Managed items: ${manifest.managedItems.length}`));
-  assert.match(summaryStatusResult.stdout, new RegExp(`OK: ${manifest.managedItems.length - 2}`));
   assert.match(summaryStatusResult.stdout, /Modified: 1/);
   assert.match(summaryStatusResult.stdout, /Missing: 1/);
   assert.equal(/\n\s+- /.test(summaryStatusResult.stdout), false);
@@ -171,10 +173,10 @@ test('status detail lists modified and missing managed paths with relative targe
   const detailStatusResult = runCli(['status', sandbox.targetRoot, '--detail']);
   assertExitCode(detailStatusResult, 0, 'status detail with modified and missing items');
   assert.equal(detailStatusResult.stdout.includes('Bundle:'), false);
+  assert.equal(detailStatusResult.stdout.includes('OK:'), false);
   assert.equal(detailStatusResult.stdout.includes(sandbox.targetRoot), false);
   assert.match(detailStatusResult.stdout, new RegExp(`Managed items: ${manifest.managedItems.length}`));
   assert.match(detailStatusResult.stdout, /  - \.github\/instructions\/common\/copilot-context-bundle-operations\.instructions\.md/);
-  assert.match(detailStatusResult.stdout, new RegExp(`OK: ${manifest.managedItems.length - 2}`));
   assert.match(detailStatusResult.stdout, /Modified: 1\n  - \.github\/copilot-instructions\.md/);
   assert.match(detailStatusResult.stdout, /Missing: 1\n  - \.vscode\/mcp\.json/);
 });
