@@ -75,7 +75,7 @@ npm run cli -- --help
 npm run cli -- install ..\bundle-sandbox --profile storage-manager-fe --dry-run
 npm run cli -- status ..\bundle-sandbox
 npm run cli -- update ..\bundle-sandbox --bundle-source . --dry-run
-npm run cli -- promote ..\bundle-sandbox --file .github\instructions\storage-manager-fe.instructions.md --bundle-source .
+npm run cli -- promote ..\bundle-sandbox --file .github\instructions\storage-manager-fe\storage-manager-fe.instructions.md --bundle-source .
 ```
 
 ### 自動化測試

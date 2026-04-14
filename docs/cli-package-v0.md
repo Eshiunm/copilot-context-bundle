@@ -378,6 +378,12 @@ v0 應明確支援本機開發，不要求一開始就 publish 到 private regis
 - 若直接在 repo workspace 內執行 CLI，預設 bundle source 就是目前 workspace
 - 若之後從 npm package 執行，預設 bundle source 是 package 內容
 
+### instruction target path 分類規則
+
+- 來自 `shared/.github/instructions/*.instructions.md` 的檔案，在 target repo 中應安裝到 `.github/instructions/common/`
+- 來自 `profiles/<name>/.github/instructions/*.instructions.md` 的檔案，在 target repo 中應安裝到 `.github/instructions/<name>/`
+- 這代表 target repo 內的 instruction 路徑會依來源層級分類，而不是全部平鋪在 `.github/instructions/` 根目錄
+
 ## v0 命令邊界總結
 
 - `install`：把資產裝進去，並寫 manifest

@@ -131,13 +131,13 @@ node "D:\QNAP\copilot-context-bundle\bin\copilot-bundle.js" update "D:\QNAP\sand
 範例：
 
 ```text
-node "D:\QNAP\copilot-context-bundle\bin\copilot-bundle.js" promote "D:\QNAP\sandbox" --file .github/instructions/storage-manager-fe.instructions.md --bundle-source "D:\QNAP\copilot-context-bundle" --force
+node "D:\QNAP\copilot-context-bundle\bin\copilot-bundle.js" promote "D:\QNAP\sandbox" --file .github/instructions/storage-manager-fe/storage-manager-fe.instructions.md --bundle-source "D:\QNAP\copilot-context-bundle" --force
 ```
 
 重點：
 
 - `--file` 是 **target repo 內的相對路徑**
-- 建議一律用 `/`，例如：`.github/instructions/storage-manager-fe.instructions.md`
+- 建議一律用 `/`，例如：`.github/instructions/storage-manager-fe/storage-manager-fe.instructions.md`
 - 若 promote 目的地檔案已存在，通常需要 `--force`
 
 #### 什麼時候要加 `--to`

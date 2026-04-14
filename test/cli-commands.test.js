@@ -111,8 +111,9 @@ test('install creates managed files and status reports a clean manifest', async 
   assert.ok(manifest.managedItems.length >= 6);
 
   await fs.access(path.join(sandbox.targetRoot, '.github', 'copilot-instructions.md'));
+  await fs.access(path.join(sandbox.targetRoot, '.github', 'instructions', 'common', 'copilot-context-bundle-operations.instructions.md'));
   await fs.access(path.join(sandbox.targetRoot, '.vscode', 'mcp.json'));
-  await fs.access(path.join(sandbox.targetRoot, '.github', 'instructions', 'storage-manager-fe.instructions.md'));
+  await fs.access(path.join(sandbox.targetRoot, '.github', 'instructions', 'storage-manager-fe', 'storage-manager-fe.instructions.md'));
 
   const statusResult = runCli(['status', sandbox.targetRoot]);
   assertExitCode(statusResult, 0, 'status after install');
@@ -165,8 +166,11 @@ test('update refreshes, adds, restores, and prunes managed items', async (t) => 
 
   const manifestAfterUpdate = await readManifest(sandbox.targetRoot);
   assert.equal(manifestAfterUpdate.managedItems.length, manifestBefore.managedItems.length + 1);
-  assert.match(await readText(path.join(sandbox.targetRoot, '.github', 'instructions', 'storage-manager-fe.instructions.md')), /update refresh test/);
-  await fs.access(path.join(sandbox.targetRoot, '.github', 'instructions', 'update-added.instructions.md'));
+  assert.match(
+    await readText(path.join(sandbox.targetRoot, '.github', 'instructions', 'storage-manager-fe', 'storage-manager-fe.instructions.md')),
+    /update refresh test/
+  );
+  await fs.access(path.join(sandbox.targetRoot, '.github', 'instructions', 'storage-manager-fe', 'update-added.instructions.md'));
   await fs.access(restoredTarget);
 
   const cleanStatus = runCli(['status', sandbox.targetRoot]);
@@ -184,7 +188,9 @@ test('update refreshes, adds, restores, and prunes managed items', async (t) => 
   assertExitCode(pruneApplied, 0, 'update with prune');
   assert.match(pruneApplied.stdout, /Pruned: 1/);
 
-  await assert.rejects(fs.access(path.join(sandbox.targetRoot, '.github', 'instructions', 'update-added.instructions.md')));
+  await assert.rejects(
+    fs.access(path.join(sandbox.targetRoot, '.github', 'instructions', 'storage-manager-fe', 'update-added.instructions.md'))
+  );
 
   const manifestAfterPrune = await readManifest(sandbox.targetRoot);
   assert.equal(manifestAfterPrune.managedItems.length, manifestBefore.managedItems.length);
@@ -218,7 +224,7 @@ test('update blocks drift unless forced', async (t) => {
   assert.match(finalStatus.stdout, /Missing: 0/);
 });
 
-test('update reconciles source relocation based on targetPath', async (t) => {
+test('update migrates instruction category paths with add plus prune when source layer changes', async (t) => {
   const sandbox = await createSandbox();
   t.after(() => cleanupSandbox(sandbox.tempRoot));
 
@@ -245,20 +251,27 @@ test('update reconciles source relocation based on targetPath', async (t) => {
   await fs.rm(previousSource, { force: true });
 
   const dryRunResult = runCli(['update', sandbox.targetRoot, '--bundle-source', sandbox.bundleRoot, '--dry-run']);
-  assertExitCode(dryRunResult, 0, 'update relocation dry-run');
-  assert.match(dryRunResult.stdout, /Reconciled: 1/);
+  assertExitCode(dryRunResult, 4, 'update relocation dry-run');
+  assert.match(dryRunResult.stdout, /Added: 1/);
+  assert.match(dryRunResult.stdout, /Conflicts: 1/);
+  assert.match(dryRunResult.stdout, /prune-required/);
 
-  const updateResult = runCli(['update', sandbox.targetRoot, '--bundle-source', sandbox.bundleRoot]);
+  const updateResult = runCli(['update', sandbox.targetRoot, '--bundle-source', sandbox.bundleRoot, '--prune']);
   assertExitCode(updateResult, 0, 'update relocation apply');
-  assert.match(updateResult.stdout, /Reconciled: 1/);
+  assert.match(updateResult.stdout, /Added: 1/);
+  assert.match(updateResult.stdout, /Pruned: 1/);
 
   const manifest = await readManifest(sandbox.targetRoot);
   const relocatedItem = manifest.managedItems.find(
-    (item) => item.targetPath === '.github/instructions/frontend-ui.instructions.md'
+    (item) => item.targetPath === '.github/instructions/common/frontend-ui.instructions.md'
   );
   assert.ok(relocatedItem);
   assert.equal(relocatedItem.sourcePath, 'shared/.github/instructions/frontend-ui.instructions.md');
   assert.equal(relocatedItem.layer, 'shared');
+  await fs.access(path.join(sandbox.targetRoot, '.github', 'instructions', 'common', 'frontend-ui.instructions.md'));
+  await assert.rejects(
+    fs.access(path.join(sandbox.targetRoot, '.github', 'instructions', 'storage-manager-fe', 'frontend-ui.instructions.md'))
+  );
 
   const finalStatus = runCli(['status', sandbox.targetRoot]);
   assertExitCode(finalStatus, 0, 'status after relocation update');
@@ -272,8 +285,8 @@ test('promote writes managed changes back to the bundle source and resets target
 
   await installProfile(sandbox.targetRoot, sandbox.bundleRoot);
 
-  const repoRelativePath = '.github/instructions/storage-manager-fe.instructions.md';
-  const targetFile = path.join(sandbox.targetRoot, '.github', 'instructions', 'storage-manager-fe.instructions.md');
+  const repoRelativePath = '.github/instructions/storage-manager-fe/storage-manager-fe.instructions.md';
+  const targetFile = path.join(sandbox.targetRoot, '.github', 'instructions', 'storage-manager-fe', 'storage-manager-fe.instructions.md');
   const sourceFile = path.join(
     sandbox.bundleRoot,
     'profiles',
@@ -315,8 +328,8 @@ test('promote can relocate a managed file to shared and remove the stale source'
 
   await installProfile(sandbox.targetRoot, sandbox.bundleRoot);
 
-  const repoRelativePath = '.github/instructions/frontend-ui.instructions.md';
-  const targetFile = path.join(sandbox.targetRoot, '.github', 'instructions', 'frontend-ui.instructions.md');
+  const repoRelativePath = '.github/instructions/storage-manager-fe/frontend-ui.instructions.md';
+  const targetFile = path.join(sandbox.targetRoot, '.github', 'instructions', 'storage-manager-fe', 'frontend-ui.instructions.md');
   const previousSource = path.join(
     sandbox.bundleRoot,
     'profiles',
@@ -357,8 +370,11 @@ test('promote can relocate a managed file to shared and remove the stale source'
   assertExitCode(freshInstall, 0, 'fresh install after promote relocate');
 
   const freshManifest = await readManifest(freshTarget);
-  const relocatedItem = freshManifest.managedItems.find((item) => item.targetPath === repoRelativePath);
+  const relocatedItem = freshManifest.managedItems.find(
+    (item) => item.targetPath === '.github/instructions/common/frontend-ui.instructions.md'
+  );
   assert.ok(relocatedItem);
   assert.equal(relocatedItem.sourcePath, 'shared/.github/instructions/frontend-ui.instructions.md');
   assert.equal(relocatedItem.layer, 'shared');
+  await fs.access(path.join(freshTarget, '.github', 'instructions', 'common', 'frontend-ui.instructions.md'));
 });
