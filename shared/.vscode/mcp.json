@@ -6,6 +6,38 @@
 			"headers": {
 				"Authorization": "Bearer ${input:github_mcp_pat}"
 			}
+		},
+		"Qnap-Gitlab": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"-y",
+				"@zereight/mcp-gitlab",
+				"--disabledTools",
+				"create_or_update_file,push_files,create_repository,fork_repository,search_repositories,create_branch,list_group_projects,list_group_iterations"
+			],
+			"env": {
+				"GITLAB_PERSONAL_ACCESS_TOKEN": "${input:gitlab_personal_access_token}",
+				"GITLAB_API_URL": "https://sauron.qnap.com/api/v4",
+				"GITLAB_PROJECT_ID": "4465",
+				"GITLAB_USERNAME": "michaelli",
+				"GITLAB_USER_ID": "1404"
+			}
+		},
+		"atlassianMcp": {
+			"command": "C:\\MCP\\atlassian-venv\\Scripts\\mcp-atlassian.exe",
+			"args": [],
+			"env": {
+				"JIRA_URL": "https://qnap-jira.qnap.com.tw/",
+				"JIRA_USERNAME": "michaelli@qnap.com",
+				"JIRA_PERSONAL_TOKEN": "${input:jira_personal_token}",
+				"CONFLUENCE_URL": "https://qnap-confluence.qnap.com.tw",
+				"CONFLUENCE_USERNAME": "michaelli@qnap.com",
+				"CONFLUENCE_PERSONAL_TOKEN": "${input:confluence_personal_token}",
+				"CONFLUENCE_SPACES_FILTER": "~michaelli@qnap.com,SW54",
+				"CONFLUENCE_SW54_WEEKLY_MEETING_PAGE_ID": "32541490"
+			},
+			"type": "stdio"
 		}
 	},
 	"inputs": [
@@ -13,6 +45,24 @@
 			"type": "promptString",
 			"id": "github_mcp_pat",
 			"description": "GitHub Personal Access Token",
+			"password": true
+		},
+		{
+			"type": "promptString",
+			"id": "gitlab_personal_access_token",
+			"description": "GitLab Token (api scope)",
+			"password": true
+		},
+		{
+			"type": "promptString",
+			"id": "jira_personal_token",
+			"description": "JIRA Personal Token",
+			"password": true
+		},
+		{
+			"type": "promptString",
+			"id": "confluence_personal_token",
+			"description": "Confluence Personal Token",
 			"password": true
 		}
 	]
