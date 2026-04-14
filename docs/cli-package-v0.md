@@ -286,7 +286,6 @@ Updated: 4
 Added: 1
 Restored: 1
 Pruned: 0
-Manifest: D:\repo\target\.copilot-bundle\manifest.json
 ```
 
 ## `promote`

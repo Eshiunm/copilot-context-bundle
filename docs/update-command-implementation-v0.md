@@ -324,7 +324,6 @@ v0 採保守策略：
 ### 一般文字輸出
 
 ```text
-Manifest: D:\repo\target\.copilot-bundle\manifest.json
 Profile: storage-manager-fe
 Targets: github, vscode
 Updated: 4

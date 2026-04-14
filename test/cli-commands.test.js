@@ -198,6 +198,7 @@ test('update refreshes, adds, restores, and prunes managed items', async (t) => 
 
   const dryRunResult = runCli(['update', sandbox.targetRoot, '--bundle-source', sandbox.bundleRoot, '--dry-run']);
   assertExitCode(dryRunResult, 0, 'update dry-run');
+  assert.equal(dryRunResult.stdout.includes('Manifest:'), false);
   assert.match(dryRunResult.stdout, /Updated: 1/);
   assert.match(dryRunResult.stdout, /Added: 1/);
   assert.match(dryRunResult.stdout, /Restored: 1/);
@@ -205,6 +206,7 @@ test('update refreshes, adds, restores, and prunes managed items', async (t) => 
 
   const updateResult = runCli(['update', sandbox.targetRoot, '--bundle-source', sandbox.bundleRoot]);
   assertExitCode(updateResult, 0, 'update apply');
+  assert.equal(updateResult.stdout.includes('Manifest:'), false);
   assert.match(updateResult.stdout, /Updated: 1/);
   assert.match(updateResult.stdout, /Added: 1/);
   assert.match(updateResult.stdout, /Restored: 1/);
