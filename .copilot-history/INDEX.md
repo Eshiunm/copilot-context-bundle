@@ -21,3 +21,5 @@
 	- 記錄 manifest v0、CLI package v0、npm CLI skeleton 與 promote 測試前的整理結果。
 - `2026-04-13-cli-update-and-automation` -> `sessions/2026-04-13-cli-update-and-automation.md`
 	- 記錄 update v0 第一版、自動化 CLI 測試、README 指令矩陣與後續優先順序。
+- `2026-04-14-install-guides-remotes-and-versioning` -> `sessions/2026-04-14-install-guides-remotes-and-versioning.md`
+	- 記錄 install 詳細教學、雙 remote 規則、版本治理與 0.2.0 升版。
