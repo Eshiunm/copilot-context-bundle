@@ -96,7 +96,7 @@ npm test
 | 指令 | 主要參數 | 功能摘要 | 完成度 | 是否測過 |
 |---|---|---|---|---|
 | `install` | `<targetPath>`、`--profile`、`--target`、`--force`、`--dry-run`、`--bundle-source` | 安裝 `shared/` 與指定 `profile`，並寫出 `.copilot-bundle/manifest.json` | 已完成 | 是（自動化測試 + smoke test） |
-| `status` | `<targetPath>`、`--json`、`--fail-on-drift` | 根據 manifest 檢查 managed items 的 `ok / modified / missing` 狀態 | 已完成 | 是（自動化測試 + smoke test） |
+| `status` | `<targetPath>`、`--detail`、`--json`、`--fail-on-drift` | 根據 manifest 檢查 managed items 的 `ok / modified / missing` 狀態；`--detail` 可展開相對路徑明細 | 已完成 | 是（自動化測試 + smoke test） |
 | `update` | `<targetPath>`、`--bundle-source`、`--dry-run`、`--force`、`--prune`、`--json` | 依目前 bundle source 更新同一組 managed items，支援 refresh / add / restore / prune / relocation | 已完成（v0 第一版） | 是（自動化測試 + smoke test） |
 | `promote` | `<targetPath>`、`--file`、`--to`、`--bundle-source`、`--dry-run`、`--force` | 將 target repo 檔案回填到 bundle source repo，並更新 target baseline 與來源對位 | 已完成 | 是（自動化測試 + happy path / edge cases） |
 | `help` | `help [command]`、`<command> --help` | 顯示整體或單一命令的使用說明 | 已完成 | 是（自動化測試） |

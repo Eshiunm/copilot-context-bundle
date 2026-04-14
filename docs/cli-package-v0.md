@@ -174,6 +174,7 @@ copilot-bundle status <targetPath> [options]
 | 參數 | 必填 | 說明 |
 |---|---:|---|
 | `<targetPath>` | ✅ | 目標 repo 或目標資料夾路徑 |
+| `--detail` | ❌ | 文字模式輸出完整 managed item 相對路徑明細 |
 | `--json` | ❌ | 以 JSON 輸出結果，便於後續自動化 |
 | `--fail-on-drift` | ❌ | 若有 drift 或 missing item，回傳非 0 exit code |
 
@@ -189,11 +190,17 @@ copilot-bundle status <targetPath> [options]
    - `ok`
    - `modified`
    - `missing`
-5. 文字輸出會額外列出相對 `targetPath`：
+5. 預設文字輸出只顯示摘要：
+   - `bundle`
+   - `profile`
+   - `managed items`
+   - `ok / modified / missing`
+6. 若指定 `--detail`，文字輸出會額外列出相對 `targetPath`：
    - 全部 `managed items`
    - `modified` items
    - `missing` items
-6. 顯示 `localOverrides` 摘要
+7. `--json` 仍輸出完整結構化資料，不受 `--detail` 影響
+8. 顯示 `localOverrides` 摘要
 
 ### `status` 的判定語意
 
@@ -203,7 +210,18 @@ copilot-bundle status <targetPath> [options]
 | `modified` | 檔案存在，但 checksum 與 manifest 不一致 |
 | `missing` | manifest 有記錄，但 target repo 中找不到檔案 |
 
-### 輸出示例
+### 預設輸出示例
+
+```text
+Bundle: copilot-context-bundle
+Profile: storage-manager-fe
+Managed items: 6
+OK: 4
+Modified: 1
+Missing: 1
+```
+
+### `--detail` 輸出示例
 
 ```text
 Profile: storage-manager-fe

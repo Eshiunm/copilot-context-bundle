@@ -95,6 +95,10 @@ test('help and version commands return success', async () => {
   assert.match(helpResult.stdout, /update <targetPath>/);
   assert.match(helpResult.stdout, /promote <targetPath>/);
 
+  const statusHelpResult = runCli(['help', 'status']);
+  assertExitCode(statusHelpResult, 0, 'help status');
+  assert.match(statusHelpResult.stdout, /--detail/);
+
   const versionResult = runCli(['--version']);
   assertExitCode(versionResult, 0, 'version');
   assert.equal(versionResult.stdout, packageJson.version);
@@ -117,15 +121,23 @@ test('install creates managed files and status reports a clean manifest', async 
 
   const statusResult = runCli(['status', sandbox.targetRoot]);
   assertExitCode(statusResult, 0, 'status after install');
-  assert.equal(statusResult.stdout.includes('Bundle:'), false);
+  assert.match(statusResult.stdout, /Bundle: copilot-context-bundle/);
   assert.equal(statusResult.stdout.includes('Manifest:'), false);
   assert.equal(statusResult.stdout.includes(sandbox.targetRoot), false);
   assert.match(statusResult.stdout, new RegExp(`Managed items: ${manifest.managedItems.length}`));
-  assert.match(statusResult.stdout, /  - \.github\/instructions\/common\/copilot-context-bundle-operations\.instructions\.md/);
+  assert.equal(/\n\s+- /.test(statusResult.stdout), false);
   assert.match(statusResult.stdout, /Modified: 0/);
-  assert.match(statusResult.stdout, /Modified: 0\n  - \(none\)/);
   assert.match(statusResult.stdout, /Missing: 0/);
-  assert.match(statusResult.stdout, /Missing: 0\n  - \(none\)/);
+
+  const detailStatusResult = runCli(['status', sandbox.targetRoot, '--detail']);
+  assertExitCode(detailStatusResult, 0, 'status detail after install');
+  assert.equal(detailStatusResult.stdout.includes('Bundle:'), false);
+  assert.equal(detailStatusResult.stdout.includes('Manifest:'), false);
+  assert.equal(detailStatusResult.stdout.includes(sandbox.targetRoot), false);
+  assert.match(detailStatusResult.stdout, new RegExp(`Managed items: ${manifest.managedItems.length}`));
+  assert.match(detailStatusResult.stdout, /  - \.github\/instructions\/common\/copilot-context-bundle-operations\.instructions\.md/);
+  assert.match(detailStatusResult.stdout, /Modified: 0\n  - \(none\)/);
+  assert.match(detailStatusResult.stdout, /Missing: 0\n  - \(none\)/);
 
   const jsonStatusResult = runCli(['status', sandbox.targetRoot, '--json']);
   assertExitCode(jsonStatusResult, 0, 'status json after install');
@@ -133,7 +145,7 @@ test('install creates managed files and status reports a clean manifest', async 
   assert.match(jsonStatus.manifestPath.replace(/\\/g, '/'), /\/\.copilot-bundle\/manifest\.json$/);
 });
 
-test('status lists modified and missing managed paths with relative target paths', async (t) => {
+test('status detail lists modified and missing managed paths with relative target paths', async (t) => {
   const sandbox = await createSandbox();
   t.after(() => cleanupSandbox(sandbox.tempRoot));
 
@@ -146,15 +158,25 @@ test('status lists modified and missing managed paths with relative target paths
   await appendText(modifiedTarget, '\n# status drift\n');
   await fs.rm(missingTarget, { force: true });
 
-  const statusResult = runCli(['status', sandbox.targetRoot]);
-  assertExitCode(statusResult, 0, 'status with modified and missing items');
-  assert.equal(statusResult.stdout.includes('Bundle:'), false);
-  assert.equal(statusResult.stdout.includes(sandbox.targetRoot), false);
-  assert.match(statusResult.stdout, new RegExp(`Managed items: ${manifest.managedItems.length}`));
-  assert.match(statusResult.stdout, /  - \.github\/instructions\/common\/copilot-context-bundle-operations\.instructions\.md/);
-  assert.match(statusResult.stdout, new RegExp(`OK: ${manifest.managedItems.length - 2}`));
-  assert.match(statusResult.stdout, /Modified: 1\n  - \.github\/copilot-instructions\.md/);
-  assert.match(statusResult.stdout, /Missing: 1\n  - \.vscode\/mcp\.json/);
+  const summaryStatusResult = runCli(['status', sandbox.targetRoot]);
+  assertExitCode(summaryStatusResult, 0, 'status summary with modified and missing items');
+  assert.match(summaryStatusResult.stdout, /Bundle: copilot-context-bundle/);
+  assert.equal(summaryStatusResult.stdout.includes(sandbox.targetRoot), false);
+  assert.match(summaryStatusResult.stdout, new RegExp(`Managed items: ${manifest.managedItems.length}`));
+  assert.match(summaryStatusResult.stdout, new RegExp(`OK: ${manifest.managedItems.length - 2}`));
+  assert.match(summaryStatusResult.stdout, /Modified: 1/);
+  assert.match(summaryStatusResult.stdout, /Missing: 1/);
+  assert.equal(/\n\s+- /.test(summaryStatusResult.stdout), false);
+
+  const detailStatusResult = runCli(['status', sandbox.targetRoot, '--detail']);
+  assertExitCode(detailStatusResult, 0, 'status detail with modified and missing items');
+  assert.equal(detailStatusResult.stdout.includes('Bundle:'), false);
+  assert.equal(detailStatusResult.stdout.includes(sandbox.targetRoot), false);
+  assert.match(detailStatusResult.stdout, new RegExp(`Managed items: ${manifest.managedItems.length}`));
+  assert.match(detailStatusResult.stdout, /  - \.github\/instructions\/common\/copilot-context-bundle-operations\.instructions\.md/);
+  assert.match(detailStatusResult.stdout, new RegExp(`OK: ${manifest.managedItems.length - 2}`));
+  assert.match(detailStatusResult.stdout, /Modified: 1\n  - \.github\/copilot-instructions\.md/);
+  assert.match(detailStatusResult.stdout, /Missing: 1\n  - \.vscode\/mcp\.json/);
 });
 
 test('install with force can switch profile and prune stale managed files', async (t) => {
